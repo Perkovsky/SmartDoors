@@ -30,6 +30,7 @@ private:
         const auto strLogLevel = toString(logLevel);
         
         String result("[");
+        result.reserve(timestamp.length() + strLogLevel.length() + message.length() + 5);
         result += timestamp;
         result += " ";
         result += strLogLevel;
@@ -39,8 +40,7 @@ private:
         return result;
     }
 
-    void log(const LogLevel& logLevel, const String& message)
-    {
+    void log(const LogLevel& logLevel, const String& message) {
         if (logLevel < _logLevel)
             return;
 
@@ -49,6 +49,7 @@ private:
         if  (!log(logMessage))
         {
             String notifyMessage("Cannot log message: ");
+            notifyMessage.reserve(message.length() + 21);
             notifyMessage += message;
             _notifier->notify(notifyMessage);
         }

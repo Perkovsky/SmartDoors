@@ -5,7 +5,7 @@
 
 class SdCardLogger final : public BaseLogger {
 private:
-    const String FIlE_NAME = "log001.txt";
+    const String FIlE_NAME = F("log001.txt");
     SdFat& _sd;
 
 public:

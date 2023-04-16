@@ -16,6 +16,7 @@ public:
         HTTPClient httpClient;
 
         String url("https://api.telegram.org/bot");
+        url.reserve(_botId.length() + _chatId.length() + message.length() + 56);
         url += _botId;
         url += "/sendMessage?chat_id=";
         url += _chatId;

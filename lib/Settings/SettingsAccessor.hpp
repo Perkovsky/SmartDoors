@@ -8,7 +8,7 @@
 
 class SettingsAccessor {
 private:
-    const String FIlE_NAME = "settings.json";
+    const String FIlE_NAME = F("settings.json");
     SdFat& _sd;
 
 public:

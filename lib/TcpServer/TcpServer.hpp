@@ -20,10 +20,10 @@ private:
         }
 
         _client = newClient;
-        _logger.logInfo("TCP Client has been connected");
+        _logger.logInfo(F("TCP Client has been connected"));
 
         newClient->onDisconnect([this](void* data, AsyncClient* c) {
-            _logger.logInfo("TCP Client has been disconnected");
+            _logger.logInfo(F("TCP Client has been disconnected"));
             _client = NULL;
         });
 
@@ -49,7 +49,7 @@ public:
         }, this);
         
         _server->begin();
-        _logger.logInfo("TCP Server has been started");
+        _logger.logInfo(F("TCP Server has been started"));
     }
 
     bool sendMessageToClient(String message) {
@@ -62,7 +62,7 @@ public:
 
     void end() {
         _server->end();
-        _logger.logInfo("TCP Server has been ended");
+        _logger.logInfo(F("TCP Server has been ended"));
     }
 
     void stopClient() {
@@ -71,6 +71,6 @@ public:
         
         _client->stop();
         _client = NULL;
-        _logger.logInfo("TCP Client has been stopped");
+        _logger.logInfo(F("TCP Client has been stopped"));
     }
 };

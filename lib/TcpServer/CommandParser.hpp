@@ -36,13 +36,13 @@ public:
         doc.Parse(xml);
 
         if (doc.Error()) {
-            _logger.logWarning("Error parsing XML");
+            _logger.logWarning(F("Error parsing XML"));
             return;
         }
 
         tinyxml2::XMLElement* root = doc.RootElement();
         if (!root) {
-            _logger.logWarning("Error parsing XML: root is empty");
+            _logger.logWarning(F("Error parsing XML: root is empty"));
             return;
         }
 

@@ -13,13 +13,13 @@ private:
     unsigned char _count = 0;
 
     static LogLevel toLogLevel(const String& logLevel) {
-        if (logLevel == "Debug")
+        if (logLevel == F("Debug"))
             return LogLevel::Debug;
         
-        if (logLevel == "Info")
+        if (logLevel == F("Info"))
             return LogLevel::Info;
         
-        if (logLevel == "Warning")
+        if (logLevel == F("Warning"))
             return LogLevel::Warning;
 
         return LogLevel::Error;

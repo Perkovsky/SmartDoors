@@ -26,32 +26,38 @@ public:
         }
 
         digitalWrite(LED_BUILTIN, HIGH);
-        _logger.logInfo("WiFi has been connected");
+        _logger.logInfo(F("WiFi has been connected"));
         
         // log IP
-        String info("Local IP Address: ");
-        info += WiFi.localIP().toString();
-        _logger.logInfo(info);
+        String strIP = WiFi.localIP().toString();
+        String infoIP("Local IP Address: ");
+        infoIP.reserve(strIP.length() + 19);
+        infoIP += strIP;
+        _logger.logInfo(infoIP);
 
         // log host name
-        info = "Local Host Name: ";
-        info += WiFi.getHostname();
-        _logger.logInfo(info);
+        String hostname = WiFi.getHostname();
+        String infoHostname = "Local Host Name: ";
+        infoIP.reserve(infoHostname.length() + 18);
+        infoHostname += hostname;
+        _logger.logInfo(infoHostname);
     }
 
     void checkConnection() {
         IPAddress ip;
         if (WiFi.hostByName("google.com", ip)) {
+            String strIP = ip.toString();
             String result("Ping google.com successful. IP address: ");
-            result += ip.toString();
+            result.reserve(strIP.length() + 41);
+            result += strIP;
             _logger.logInfo(result);
         } else {
-            _logger.logWarning("Ping google.com failed");
+            _logger.logWarning(F("Ping google.com failed"));
         }
     }
 
     void disconnect() {
         WiFi.disconnect();
-        _logger.logInfo("WiFi has been disconnected");
+        _logger.logInfo(F("WiFi has been disconnected"));
     }
 };

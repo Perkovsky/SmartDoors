@@ -23,6 +23,8 @@ private:
     String getCommandReply(bool status, const String& value, const std::map<String, String>& attributes = std::map<String, String>()) {
         String reply("<cmdreply");
 
+        //TODO: calculate reserve
+
         addAttribute(reply, "panelid", _panel.id);
         addAttribute(reply, "status", status ? "ack" : "nack");
 
@@ -94,7 +96,7 @@ public:
         bool status = true;
         const String commandName = parser.getCommandName();
         if (!isCommandValid(commandName)) {
-            return "unknown command\r\n";
+            return F("unknown command\r\n");
         }
 
         if (commandName == "pingpanel") {
@@ -103,11 +105,11 @@ public:
 
         const String door = parser.getAttributeValue("door");
         if (door.isEmpty()) {
-            return getError(commandName, "door+attribute+is+required");
+            return getError(commandName, F("door attribute is required"));
         }
 
         if (!isDoorExisting(door)) {
-            return getError(commandName, "door+does+not+exist");
+            return getError(commandName, F("door does not exist"));
         }
 
         if (commandName == "opendoor") {
@@ -121,10 +123,10 @@ public:
         if (commandName == "displaydoor") {
             String text = parser.getCommandValue();
             if (text.isEmpty()) {
-                return getError(commandName, "text+is+required");
+                return getError(commandName, F("text is required"));
             }
             if (text.length() > 16) {
-                return getError(commandName, "max+text+length+is+16");
+                return getError(commandName, F("max text length is 16"));
             }
             String line = parser.getAttributeValue("line");
             status = handleDisplayDoorCommand(door, line, text);
