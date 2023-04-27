@@ -9,6 +9,8 @@
 #include "TcpServer.hpp"
 #include "SmartDoorsPanel.hpp"
 #include "SmartDoorsTcpCommandProcessor.hpp"
+#include "HardwareComponentsManager.hpp"
+
 
 uRTCLib rtc(0x68);
 RtcDateTimeProvider dateTimeProvider(rtc);
@@ -18,6 +20,7 @@ LoggerFactory* logger;
 WiFiManager* wifiManager;
 
 SmartDoorsPanel panel;
+HardwareComponentsManager* hardwareComponentsManager;
 AbstractTcpCommandProcessor* tcpCommandProcessor;
 TcpServer* tcpServer; 
 
@@ -52,6 +55,10 @@ void setup() {
     panel.doors = std::map<int8_t, SmartDoorsDoor>();
     panel.doors[1] = door1;
 
+    // Hardware
+    hardwareComponentsManager = new HardwareComponentsManager(dateTimeProvider);
+    hardwareComponentsManager->init();
+
     // TCP Server
     tcpCommandProcessor = new SmartDoorsTcpCommandProcessor(panel, *logger);
     tcpServer = new TcpServer(*tcpCommandProcessor, *logger);
@@ -60,6 +67,7 @@ void setup() {
 
 void loop() {
     rtc.refresh();
+    hardwareComponentsManager->refresh();
     logger->logInfo("ping");
     delay(1000);
 }

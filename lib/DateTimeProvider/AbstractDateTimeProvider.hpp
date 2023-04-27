@@ -8,4 +8,5 @@ protected:
 
 public:
    virtual String getTimestamp() = 0;
+   virtual String getDateTime() = 0;
 };
