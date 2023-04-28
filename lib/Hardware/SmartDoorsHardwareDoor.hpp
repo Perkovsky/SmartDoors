@@ -8,8 +8,7 @@
 
 struct SmartDoorsLcdDisplay {
     LcdDisplay* lcdDisplay;
-    String currentDateTime;
-    // lcdDisplayTimer;
+    unsigned long lcdDisplayTimer;
 };
 
 struct SmartDoorsHardwareDoor {

@@ -62,7 +62,7 @@ void setup() {
     hardwareManager->init();
 
     // TCP Server
-    tcpCommandProcessor = new SmartDoorsTcpCommandProcessor(panel, *logger);
+    tcpCommandProcessor = new SmartDoorsTcpCommandProcessor(*hardwareManager, *logger);
     tcpServer = new TcpServer(*tcpCommandProcessor, *logger);
     tcpServer->bebin(settings.tcpServerPort);
 }
@@ -70,6 +70,6 @@ void setup() {
 void loop() {
     rtc.refresh();
     hardwareManager->refresh();
-    logger->logInfo("ping");
-    delay(1000);
+    // logger->logInfo("ping");
+    // delay(1000);
 }

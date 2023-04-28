@@ -3,13 +3,13 @@
 #include <map>
 #include <String.h>
 #include "LoggerFactory.hpp"
-#include "SmartDoorsPanelSetup.hpp"
+#include "HardwareManager.hpp"
 #include "AbstractTcpCommandProcessor.hpp"
 #include "CommandParser.hpp"
 
 class SmartDoorsTcpCommandProcessor final : public AbstractTcpCommandProcessor {
 private:
-    const SmartDoorsPanelSetup& _panel;
+    HardwareManager& _hardwareManager;
     LoggerFactory& _logger;
     
     void addAttribute(String& reply, const String& attribute, const String& value) {
@@ -25,7 +25,7 @@ private:
 
         //TODO: calculate reserve
 
-        addAttribute(reply, "panelid", _panel.id);
+        addAttribute(reply, "panelid", _hardwareManager.getPanelId());
         addAttribute(reply, "status", status ? "ack" : "nack");
 
         for (const auto& attribute : attributes) {
@@ -56,23 +56,26 @@ private:
         return commands.count(command) > 0;
     }
 
-    bool isDoorExisting(const String& doorValue) {
-        int8_t door = doorValue.toInt();
-        return _panel.doors.find(door) != _panel.doors.end();
+    u_int8_t getDoor(const String& door) {
+        return door.toInt();
     }
 
-    bool handleOpenDoorCommand(const String& door) {
+    bool isDoorExisting(const u_int8_t door) {
+        return _hardwareManager.isDoorExisting(door);
+    }
+
+    bool handleOpenDoorCommand(const u_int8_t door) {
         // DO HARDWARE LOGIC
         return true;
     }
 
-    bool handleLightDoorCommand(const String& door) {
+    bool handleLightDoorCommand(const u_int8_t door) {
         // DO HARDWARE LOGIC
         return true;
     }
 
-    bool handleDisplayDoorCommand(const String& door, const String& lineValue, const String& text) {
-        int8_t line = 1;
+    bool handleDisplayDoorCommand(const u_int8_t door, const String& lineValue, const String& text) {
+        u_int8_t line = 1;
         if (!lineValue.isEmpty()) {
            line = lineValue.toInt();
         }
@@ -81,13 +84,13 @@ private:
            line = 1;
         }
 
-        // DO HARDWARE LOGIC
+        _hardwareManager.print(door, text, line - 1);
         return true;
     }
 
 public:
-    SmartDoorsTcpCommandProcessor(const SmartDoorsPanelSetup& panel, LoggerFactory& logger)
-        : _panel(panel), _logger(logger) {}
+    SmartDoorsTcpCommandProcessor(HardwareManager& hardwareManager, LoggerFactory& logger)
+        : _hardwareManager(hardwareManager), _logger(logger) {}
 
     String getReply(char* command) override {
         CommandParser parser(_logger);
@@ -103,11 +106,12 @@ public:
             return getCommandReply(status, commandName);
         }
 
-        const String door = parser.getAttributeValue("door");
-        if (door.isEmpty()) {
+        const String doorValue = parser.getAttributeValue("door");
+        if (doorValue.isEmpty()) {
             return getError(commandName, F("door attribute is required"));
         }
 
+        const u_int8_t door = getDoor(doorValue);
         if (!isDoorExisting(door)) {
             return getError(commandName, F("door does not exist"));
         }
