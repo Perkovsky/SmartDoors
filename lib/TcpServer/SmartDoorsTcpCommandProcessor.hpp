@@ -3,13 +3,13 @@
 #include <map>
 #include <String.h>
 #include "LoggerFactory.hpp"
-#include "SmartDoorsPanel.hpp"
+#include "SmartDoorsPanelSetup.hpp"
 #include "AbstractTcpCommandProcessor.hpp"
 #include "CommandParser.hpp"
 
 class SmartDoorsTcpCommandProcessor final : public AbstractTcpCommandProcessor {
 private:
-    const SmartDoorsPanel& _panel;
+    const SmartDoorsPanelSetup& _panel;
     LoggerFactory& _logger;
     
     void addAttribute(String& reply, const String& attribute, const String& value) {
@@ -86,7 +86,7 @@ private:
     }
 
 public:
-    SmartDoorsTcpCommandProcessor(const SmartDoorsPanel& panel, LoggerFactory& logger)
+    SmartDoorsTcpCommandProcessor(const SmartDoorsPanelSetup& panel, LoggerFactory& logger)
         : _panel(panel), _logger(logger) {}
 
     String getReply(char* command) override {

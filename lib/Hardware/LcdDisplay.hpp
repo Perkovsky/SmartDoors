@@ -4,9 +4,13 @@
 
 class LcdDisplay {
 private:
-    LiquidCrystal_I2C* _lcd = new LiquidCrystal_I2C(0x27, 16, 2);
+    LiquidCrystal_I2C* _lcd;
 
 public:
+    LcdDisplay(const u_int8_t lcdAddress) {
+        _lcd = new LiquidCrystal_I2C(lcdAddress, 16, 2);
+    }
+
     void init() {
         _lcd->init();
         _lcd->backlight();

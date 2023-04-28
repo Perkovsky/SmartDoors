@@ -7,9 +7,9 @@
 #include "LoggerFactory.hpp"
 #include "SettingsAccessor.hpp"
 #include "TcpServer.hpp"
-#include "SmartDoorsPanel.hpp"
+#include "SmartDoorsPanelSetup.hpp"
 #include "SmartDoorsTcpCommandProcessor.hpp"
-#include "HardwareComponentsManager.hpp"
+#include "HardwareManager.hpp"
 
 
 uRTCLib rtc(0x68);
@@ -19,8 +19,8 @@ TelegramNotifier* notifier;
 LoggerFactory* logger;
 WiFiManager* wifiManager;
 
-SmartDoorsPanel panel;
-HardwareComponentsManager* hardwareComponentsManager;
+SmartDoorsPanelSetup panel;
+HardwareManager* hardwareManager;
 AbstractTcpCommandProcessor* tcpCommandProcessor;
 TcpServer* tcpServer; 
 
@@ -48,16 +48,18 @@ void setup() {
     delay(1000);
     wifiManager->checkConnection();
 
-    // smart doors panel
-    SmartDoorsDoor door1;
-    door1.ledPin = 6;
+    // smart doors panel setup
+    SmartDoorsDoorSetup door1;
+    door1.ledPin = 2;
+    door1.lcdAddress = 0x27;
+    std::map<u_int8_t, SmartDoorsDoorSetup> doors;
+    doors[1] = door1;
     panel.id = "0050c23d8000";
-    panel.doors = std::map<int8_t, SmartDoorsDoor>();
-    panel.doors[1] = door1;
+    panel.doors = doors; 
 
-    // Hardware
-    hardwareComponentsManager = new HardwareComponentsManager(dateTimeProvider);
-    hardwareComponentsManager->init();
+    // hardware
+    hardwareManager = new HardwareManager(panel, dateTimeProvider);
+    hardwareManager->init();
 
     // TCP Server
     tcpCommandProcessor = new SmartDoorsTcpCommandProcessor(panel, *logger);
@@ -67,7 +69,7 @@ void setup() {
 
 void loop() {
     rtc.refresh();
-    hardwareComponentsManager->refresh();
+    hardwareManager->refresh();
     logger->logInfo("ping");
     delay(1000);
 }
