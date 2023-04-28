@@ -7,8 +7,8 @@
 class HardwareManager {
 private:
     const u_int32_t DEFAULT_DELAY = 5000; // 5 seconds
+    const SmartDoorsPanelSetup _panel;
     String _currentDateTime;
-    const SmartDoorsPanelSetup& _panel;
     AbstractDateTimeProvider& _dateTimeProvider;
     SmartDoorsHardwareDoor doors[DOORS_COUNT];
     
@@ -48,8 +48,8 @@ private:
     }
 
 public:
-    HardwareManager(const SmartDoorsPanelSetup& panel, AbstractDateTimeProvider& dateTimeProvider)
-        : _panel(panel), _dateTimeProvider(dateTimeProvider)
+    HardwareManager(AbstractDateTimeProvider& dateTimeProvider)
+        : _dateTimeProvider(dateTimeProvider)
     {
         setup();
     }

@@ -6,10 +6,9 @@
 #include "RtcDateTimeProvider.hpp"
 #include "LoggerFactory.hpp"
 #include "SettingsAccessor.hpp"
-#include "TcpServer.hpp"
-#include "SmartDoorsPanelSetup.hpp"
-#include "SmartDoorsTcpCommandProcessor.hpp"
 #include "HardwareManager.hpp"
+#include "SmartDoorsTcpCommandProcessor.hpp"
+#include "TcpServer.hpp"
 
 uRTCLib rtc(0x68);
 RtcDateTimeProvider dateTimeProvider(rtc);
@@ -18,7 +17,6 @@ TelegramNotifier* notifier;
 LoggerFactory* logger;
 WiFiManager* wifiManager;
 
-SmartDoorsPanelSetup panel;
 HardwareManager* hardwareManager;
 AbstractTcpCommandProcessor* tcpCommandProcessor;
 TcpServer* tcpServer; 
@@ -47,17 +45,8 @@ void setup() {
     delay(1000);
     wifiManager->checkConnection();
 
-    // smart doors panel setup
-    SmartDoorsDoorSetup door1;
-    door1.ledPin = 2;
-    door1.lcdAddress = 0x27;
-    std::map<u_int8_t, SmartDoorsDoorSetup> doors;
-    doors[1] = door1;
-    panel.id = "0050c23d8000";
-    panel.doors = doors; 
-
     // hardware
-    hardwareManager = new HardwareManager(panel, dateTimeProvider);
+    hardwareManager = new HardwareManager(dateTimeProvider);
     hardwareManager->init();
 
     // TCP Server
