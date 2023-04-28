@@ -11,7 +11,6 @@
 #include "SmartDoorsTcpCommandProcessor.hpp"
 #include "HardwareManager.hpp"
 
-
 uRTCLib rtc(0x68);
 RtcDateTimeProvider dateTimeProvider(rtc);
 SdFat sd;
@@ -70,6 +69,4 @@ void setup() {
 void loop() {
     rtc.refresh();
     hardwareManager->refresh();
-    // logger->logInfo("ping");
-    // delay(1000);
 }

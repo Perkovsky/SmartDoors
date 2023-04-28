@@ -2,15 +2,12 @@
 
 #include <map>
 #include <String.h>
+#include "LedLighter.hpp"
 #include "LcdDisplay.hpp"
 
 #define DOORS_COUNT 1
 
-struct SmartDoorsLcdDisplay {
-    LcdDisplay* lcdDisplay;
-    unsigned long lcdDisplayTimer;
-};
-
 struct SmartDoorsHardwareDoor {
-    SmartDoorsLcdDisplay lcdDisplayObject;
+    LedLighter* ledLighter;
+    LcdDisplay* lcdDisplay;
 };

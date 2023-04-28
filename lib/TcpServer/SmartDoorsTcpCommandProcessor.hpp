@@ -70,7 +70,7 @@ private:
     }
 
     bool handleLightDoorCommand(const u_int8_t door) {
-        // DO HARDWARE LOGIC
+        _hardwareManager.light(door);
         return true;
     }
 
