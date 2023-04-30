@@ -3,6 +3,8 @@
 #include <map>
 #include <String.h>
 
+#define DOORS_COUNT 1
+
 struct SmartDoorsDoorSetup {
     u_int8_t ledPin;
     u_int8_t lcdAddress;

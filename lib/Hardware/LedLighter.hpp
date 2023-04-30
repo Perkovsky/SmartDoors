@@ -1,26 +1,18 @@
 #pragma once
 
 #include <Arduino.h>
+#include "BaseHardwareDevice.hpp"
 
-class LedLighter {
+class LedLighter final : public BaseHardwareDevice {
 private:
     const u_int8_t _ledPin;
-    unsigned long _timer = 0;
 
 public:
     LedLighter(const u_int8_t ledPin)
         : _ledPin(ledPin) {}
 
-    void init() {
+    void init() override {
         pinMode(_ledPin, OUTPUT);
-    }
-
-    void setTimer(unsigned long value) {
-        _timer = value;
-    }
-
-    unsigned long getTimer() {
-        return _timer;
     }
 
     void lightOn() {

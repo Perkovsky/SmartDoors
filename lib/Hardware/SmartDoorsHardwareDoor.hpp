@@ -5,8 +5,6 @@
 #include "LedLighter.hpp"
 #include "LcdDisplay.hpp"
 
-#define DOORS_COUNT 1
-
 struct SmartDoorsHardwareDoor {
     LedLighter* ledLighter;
     LcdDisplay* lcdDisplay;
