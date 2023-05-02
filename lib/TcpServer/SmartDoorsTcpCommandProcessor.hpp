@@ -65,7 +65,7 @@ private:
     }
 
     bool handleOpenDoorCommand(const u_int8_t door) {
-        // DO HARDWARE LOGIC
+        _hardwareManager.unlock(door);
         return true;
     }
 

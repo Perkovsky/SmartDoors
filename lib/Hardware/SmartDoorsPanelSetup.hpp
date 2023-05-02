@@ -8,11 +8,15 @@
 struct SmartDoorsDoorSetup {
     u_int8_t ledPin;
     u_int8_t lcdAddress;
+    u_int8_t buzzerPin;
+    byte ssPin;
+    byte rstPin;
+    unsigned long cardUids[2];
 };
 
 struct SmartDoorsPanelSetup {
 private:
-    SmartDoorsDoorSetup door1 = {16, 0x27};
+    SmartDoorsDoorSetup door1 = {16, 0x27, 11, 5, 0, {4087547319, 2736997647}};
 
 public:
     String id;
