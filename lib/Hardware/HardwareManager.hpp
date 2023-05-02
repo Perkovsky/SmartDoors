@@ -18,7 +18,7 @@ private:
             const SmartDoorsDoorSetup& doorSetup = _panel.doors.at(i + 1);
             door.ledLighter = new LedLighter(doorSetup.ledPin);
             door.lcdDisplay = new LcdDisplay(doorSetup.lcdAddress);
-            door.doorOpenModule = new DoorOpenModule(doorSetup.buzzerPin, doorSetup.ssPin, doorSetup.rstPin);
+            door.doorOpenModule = new DoorOpenModule(doorSetup.buzzerPin, doorSetup.servoPin, doorSetup.ssPin, doorSetup.rstPin);
             doors[i] = door;
         }
     }

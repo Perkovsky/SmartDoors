@@ -2,19 +2,20 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
-//#include <Servo.h>
+#include <Servo.h>
 #include "BaseHardwareDevice.hpp"
 
 class DoorOpenModule final : public BaseHardwareDevice {
 private:
     const u_int8_t _buzzerPin;
+    const u_int8_t _servoPin;
     bool _isOpened = false;
     MFRC522* _mfrc522;
-    //Servo _servo;
+    Servo _servo;
 
 public:
-    DoorOpenModule(const u_int8_t buzzerPin, const byte ssPin, const byte rstPin)
-        : _buzzerPin(buzzerPin)
+    DoorOpenModule(const u_int8_t buzzerPin, const u_int8_t servoPin, const byte ssPin, const byte rstPin)
+        : _buzzerPin(buzzerPin), _servoPin(servoPin)
     {
        _mfrc522 = new MFRC522(ssPin, rstPin);
     }
@@ -23,8 +24,8 @@ public:
         pinMode(_buzzerPin, OUTPUT);
         SPI.begin();
         _mfrc522->PCD_Init();
-        //_servo.attach(6);
-        //_servo.write(0);
+        _servo.attach(_servoPin);
+        _servo.write(0);
     }
 
     unsigned long getCardUid() {
@@ -56,7 +57,7 @@ public:
         _isOpened = true;
         noTone(_buzzerPin);
         tone(_buzzerPin, 200, 500);
-        //_servo.write(90);
+        _servo.write(90);
     }
 
     void lock() {
@@ -67,6 +68,6 @@ public:
         _isOpened = false;
         noTone(_buzzerPin);
         tone(_buzzerPin, 500, 500);
-        //_servo.write(0);
+        _servo.write(0);
     }
 };
