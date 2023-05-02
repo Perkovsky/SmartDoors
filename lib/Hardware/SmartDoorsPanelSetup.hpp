@@ -16,7 +16,7 @@ struct SmartDoorsDoorSetup {
 
 struct SmartDoorsPanelSetup {
 private:
-    SmartDoorsDoorSetup door1 = {16, 0x27, 26, 5, 0, {4087547319, 2736997647}};
+    SmartDoorsDoorSetup door1 = {16, 0x27, 27, 5, 0, {4087547319, 2736997647}};
 
 public:
     String id;

@@ -78,7 +78,7 @@ private:
         if (isValidCard(door, uid)) {
             unlock(door);
         } else {
-            Serial.println("not valid");
+            // Serial.println("Access Denied");
         }
     }
 

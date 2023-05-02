@@ -20,7 +20,7 @@ public:
     }
 
     void init() override {
-        //pinMode(_buzzerPin, OUTPUT);
+        pinMode(_buzzerPin, OUTPUT);
         SPI.begin();
         _mfrc522->PCD_Init();
         //_servo.attach(6);
@@ -49,14 +49,24 @@ public:
     }
 
     void unlock() {
+        if (_isOpened) {
+            return;
+        }
+
         _isOpened = true;
+        noTone(_buzzerPin);
+        tone(_buzzerPin, 200, 500);
         //_servo.write(90);
-        //tone(5, 200, 500);
     }
 
     void lock() {
+        if (!_isOpened) {
+            return;
+        }
+
         _isOpened = false;
+        noTone(_buzzerPin);
+        tone(_buzzerPin, 500, 500);
         //_servo.write(0);
-        //tone(5, 500, 500);
     }
 };
