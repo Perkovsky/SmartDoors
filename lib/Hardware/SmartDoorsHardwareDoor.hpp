@@ -4,10 +4,10 @@
 #include <String.h>
 #include "LedLighter.hpp"
 #include "LcdDisplay.hpp"
-#include "RfidReader.hpp"
+#include "DoorOpenModule.hpp"
 
 struct SmartDoorsHardwareDoor {
     LedLighter* ledLighter;
     LcdDisplay* lcdDisplay;
-    RfidReader* rfidReader;
+    DoorOpenModule* doorOpenModule;
 };

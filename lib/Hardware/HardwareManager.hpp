@@ -18,7 +18,7 @@ private:
             const SmartDoorsDoorSetup& doorSetup = _panel.doors.at(i + 1);
             door.ledLighter = new LedLighter(doorSetup.ledPin);
             door.lcdDisplay = new LcdDisplay(doorSetup.lcdAddress);
-            door.rfidReader = new RfidReader(/*doorSetup.buzzerPin,*/ doorSetup.ssPin, doorSetup.rstPin);
+            door.doorOpenModule = new DoorOpenModule(doorSetup.buzzerPin, doorSetup.ssPin, doorSetup.rstPin);
             doors[i] = door;
         }
     }
@@ -47,13 +47,13 @@ private:
         lcdDisplay->print(dt);
     }
 
-    void lockDoor(RfidReader* rfidReader) {
-        if (millis() - rfidReader->getTimer() < DEFAULT_DELAY) {
+    void lockDoor(DoorOpenModule* doorOpenModule) {
+        if (millis() - doorOpenModule->getTimer() < DEFAULT_DELAY) {
             return;
         }
         
-        rfidReader->setTimer(0);
-        rfidReader->lock();
+        doorOpenModule->setTimer(0);
+        doorOpenModule->lock();
     }
 
     bool isValidCard(u_int8_t door, unsigned long searchValue) {
@@ -69,9 +69,9 @@ private:
         return false;
     }
 
-    void listeningDoorEvents(u_int8_t door, RfidReader* rfidReader) {
-        unsigned long uid = rfidReader->getCardUid();
-        if (uid == 0) {
+    void listeningDoorEvents(u_int8_t door, DoorOpenModule* doorOpenModule) {
+        unsigned long uid = doorOpenModule->getCardUid();
+        if (uid == 0 || doorOpenModule->isDoorOpened()) {
             return;
         }
         
@@ -93,7 +93,7 @@ public:
         for (u_int8_t i = 0; i < DOORS_COUNT; i++) {
             doors[i].ledLighter->init();
             doors[i].lcdDisplay->init();
-            doors[i].rfidReader->init();
+            doors[i].doorOpenModule->init();
         }
     }
 
@@ -101,8 +101,8 @@ public:
         for (u_int8_t i = 0; i < DOORS_COUNT; i++) {
             lightOff(doors[i].ledLighter);
             printCurrentDateTime(doors[i].lcdDisplay);
-            lockDoor(doors[i].rfidReader);
-            listeningDoorEvents(i + 1, doors[i].rfidReader);
+            lockDoor(doors[i].doorOpenModule);
+            listeningDoorEvents(i + 1, doors[i].doorOpenModule);
         }
     }
 
@@ -128,7 +128,7 @@ public:
     void unlock(u_int8_t door) {
         light(door);
         print(door, "Door is opened");
-        doors[door - 1].rfidReader->setTimer(millis());
-        doors[door - 1].rfidReader->unlock();
+        doors[door - 1].doorOpenModule->setTimer(millis());
+        doors[door - 1].doorOpenModule->unlock();
     }
 };

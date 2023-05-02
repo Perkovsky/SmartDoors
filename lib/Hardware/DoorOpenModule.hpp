@@ -5,15 +5,16 @@
 //#include <Servo.h>
 #include "BaseHardwareDevice.hpp"
 
-class RfidReader final : public BaseHardwareDevice {
+class DoorOpenModule final : public BaseHardwareDevice {
 private:
-    //const u_int8_t _buzzerPin;
+    const u_int8_t _buzzerPin;
+    bool _isOpened = false;
     MFRC522* _mfrc522;
     //Servo _servo;
 
 public:
-    RfidReader(/*const u_int8_t buzzerPin,*/ const byte ssPin, const byte rstPin)
-        //: _buzzerPin(buzzerPin)
+    DoorOpenModule(const u_int8_t buzzerPin, const byte ssPin, const byte rstPin)
+        : _buzzerPin(buzzerPin)
     {
        _mfrc522 = new MFRC522(ssPin, rstPin);
     }
@@ -43,12 +44,18 @@ public:
         return uid;
     }
 
+    bool isDoorOpened() {
+        return _isOpened;
+    }
+
     void unlock() {
+        _isOpened = true;
         //_servo.write(90);
         //tone(5, 200, 500);
     }
 
     void lock() {
+        _isOpened = false;
         //_servo.write(0);
         //tone(5, 500, 500);
     }
