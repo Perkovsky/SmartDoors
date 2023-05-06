@@ -9,4 +9,6 @@ protected:
 public:
    virtual String getTimestamp() = 0;
    virtual String getDateTime() = 0;
+   virtual String getDate() = 0;
+   virtual String getTime() = 0;
 };

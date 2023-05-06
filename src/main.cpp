@@ -53,6 +53,11 @@ void setup() {
     tcpCommandProcessor = new SmartDoorsTcpCommandProcessor(*hardwareManager, *logger);
     tcpServer = new TcpServer(*tcpCommandProcessor, *logger);
     tcpServer->bebin(settings.tcpServerPort);
+
+    // setup hardware event callback
+    hardwareManager->onEvent([](const String& message) {
+        tcpServer->sendMessageToClient(message);
+    });
 }
 
 void loop() {

@@ -3,14 +3,27 @@
 #include "SmartDoorsPanelSetup.hpp"
 #include "AbstractDateTimeProvider.hpp"
 #include "SmartDoorsHardwareDoor.hpp"
+#include "ReplyBuilder.hpp"
+
+typedef void (*CallbackFunction)(const String& message);
 
 class HardwareManager {
 private:
     const u_int32_t DEFAULT_DELAY = 5000; // 5 seconds
     const SmartDoorsPanelSetup _panel;
+    CallbackFunction _callback = nullptr;
+    int eventCount = 0;
     String _currentDateTime;
     AbstractDateTimeProvider& _dateTimeProvider;
     SmartDoorsHardwareDoor doors[DOORS_COUNT];
+    
+    void triggerEvent(const String& message) {
+        if (!_callback) {
+            return;
+        }
+
+        _callback(message);
+    }
     
     void setup() {
         for (u_int8_t i = 0; i < DOORS_COUNT; i++) {
@@ -32,6 +45,22 @@ private:
         ledLighter->lightOff();
     }
 
+    String getEventReply(u_int8_t door, const String& value, const String& error = String()) {
+        ReplyBuilder* replyBuilder = new ReplyBuilder(F("doorevent"), value);
+        replyBuilder = replyBuilder
+            ->addAttribute("panelid", getPanelId())
+            ->addAttribute("eventid", String(++eventCount))
+            ->addAttribute("date", _dateTimeProvider.getDate())
+            ->addAttribute("time", _dateTimeProvider.getTime())
+            ->addAttribute("door", String(door));
+
+        if (!error.isEmpty()) {
+            replyBuilder = replyBuilder->addAttribute("error", error);
+        }
+        
+        return replyBuilder->build();
+    }
+
     void printCurrentDateTime(LcdDisplay* lcdDisplay) {
         if (millis() - lcdDisplay->getTimer() < DEFAULT_DELAY) {
             return;
@@ -47,13 +76,19 @@ private:
         lcdDisplay->print(dt);
     }
 
-    void lockDoor(DoorOpenModule* doorOpenModule) {
-        if (millis() - doorOpenModule->getTimer() < DEFAULT_DELAY) {
+    void lockDoor(u_int8_t door, DoorOpenModule* doorOpenModule) {
+        auto timer = doorOpenModule->getTimer();
+        if (millis() - timer < DEFAULT_DELAY) {
             return;
         }
         
+        if (timer == 0) {
+            return;
+        }
+
         doorOpenModule->setTimer(0);
         doorOpenModule->lock();
+        triggerEvent(getEventReply(door, F("lock")));
     }
 
     bool isValidCard(u_int8_t door, unsigned long searchValue) {
@@ -78,7 +113,7 @@ private:
         if (isValidCard(door, uid)) {
             unlock(door);
         } else {
-            // Serial.println("Access Denied");
+            triggerEvent(getEventReply(door, F("unlock"), "Access Denied"));
         }
     }
 
@@ -87,6 +122,10 @@ public:
         : _dateTimeProvider(dateTimeProvider)
     {
         setup();
+    }
+
+    void onEvent(CallbackFunction callback) {
+        _callback = callback;
     }
 
     void init() {
@@ -101,7 +140,7 @@ public:
         for (u_int8_t i = 0; i < DOORS_COUNT; i++) {
             lightOff(doors[i].ledLighter);
             printCurrentDateTime(doors[i].lcdDisplay);
-            lockDoor(doors[i].doorOpenModule);
+            lockDoor(i + 1, doors[i].doorOpenModule);
             listeningDoorEvents(i + 1, doors[i].doorOpenModule);
         }
     }
@@ -130,5 +169,6 @@ public:
         print(door, "Door is opened");
         doors[door - 1].doorOpenModule->setTimer(millis());
         doors[door - 1].doorOpenModule->unlock();
+        triggerEvent(getEventReply(door, F("unlock")));
     }
 };

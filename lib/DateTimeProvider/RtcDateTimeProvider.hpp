@@ -17,8 +17,20 @@ public:
     }
 
     String getDateTime() override {
-        char timestamp[17];
-        sprintf(timestamp, "20%02d-%02d-%02d %02d:%02d", _rtc.year(), _rtc.month(), _rtc.day(), _rtc.hour(), _rtc.minute());
-        return String(timestamp);
+        char dt[17];
+        sprintf(dt, "20%02d-%02d-%02d %02d:%02d", _rtc.year(), _rtc.month(), _rtc.day(), _rtc.hour(), _rtc.minute());
+        return String(dt);
+    }
+
+    String getDate() override {
+        char date[11];
+        sprintf(date, "20%02d-%02d-%02d", _rtc.year(), _rtc.month(), _rtc.day());
+        return String(date);
+    }
+
+    String getTime() override {
+        char time[9];
+        sprintf(time, "%02d:%02d:%02d", _rtc.hour(), _rtc.minute(), _rtc.second());
+        return String(time);
     }
 };

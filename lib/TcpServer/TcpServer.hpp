@@ -52,7 +52,7 @@ public:
         _logger.logInfo(F("TCP Server has been started"));
     }
 
-    bool sendMessageToClient(String message) {
+    bool sendMessageToClient(const String& message) {
         if (!_client)
             return false;
 

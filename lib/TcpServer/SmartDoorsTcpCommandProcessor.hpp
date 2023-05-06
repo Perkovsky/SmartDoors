@@ -6,37 +6,24 @@
 #include "HardwareManager.hpp"
 #include "AbstractTcpCommandProcessor.hpp"
 #include "CommandParser.hpp"
+#include "ReplyBuilder.hpp"
 
 class SmartDoorsTcpCommandProcessor final : public AbstractTcpCommandProcessor {
 private:
     HardwareManager& _hardwareManager;
     LoggerFactory& _logger;
     
-    void addAttribute(String& reply, const String& attribute, const String& value) {
-        reply += " ";
-        reply += attribute;
-        reply += "=\"";
-        reply += value;
-        reply += "\"";
-    }
-
     String getCommandReply(bool status, const String& value, const std::map<String, String>& attributes = std::map<String, String>()) {
-        String reply("<cmdreply");
+        ReplyBuilder* replyBuilder = new ReplyBuilder(F("cmdreply"), value);
+        replyBuilder = replyBuilder
+            ->addAttribute("panelid", _hardwareManager.getPanelId())
+            ->addAttribute("status", status ? "ack" : "nack");
 
-        //TODO: calculate reserve
-
-        addAttribute(reply, "panelid", _hardwareManager.getPanelId());
-        addAttribute(reply, "status", status ? "ack" : "nack");
-
-        for (const auto& attribute : attributes) {
-            addAttribute(reply, attribute.first, attribute.second);
+         for (const auto& attribute : attributes) {
+            replyBuilder = replyBuilder->addAttribute(attribute.first, attribute.second);
         }
 
-        reply += ">";
-        reply += value;
-        reply += "</cmdreply>\r\n";
-
-        return reply;
+        return replyBuilder->build();
     }
 
      String getError(const String& commandName, const String& error) {
